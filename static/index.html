@@ -13,10 +13,18 @@
         </header>
         <main>
             <form id="calc-form" class="calc-form">
-                <div class="calc-args-wrapper">
-                    <div class="calc-args">
+                <div class="field-wrapper">
+                    <b class="field-name">Функция</b>
+                    <select name="function" class="calc-arg-input">
+                    </select>
+                </div>
+
+                <div class="field-wrapper">
+                    <b class="field-name">Аргументы</b>
+                    <div class="calc-args-wrapper">
+                        <div class="calc-args"></div>
+                        <button id="calc-add-arg" class="button-secondary" type="button">+ Добавить аргумент</button>
                     </div>
-                    <button id="calc-add-arg" class="button-secondary" type="button">+ Добавить аргумент</button>
                 </div>
                 <button id="calc-submit" class="button-primary">Посчитать</button>
             </form>

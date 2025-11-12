@@ -47,6 +47,12 @@ html, body {
     max-width: 100%;
 }
 
+.field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .calc-args-wrapper,
 .calc-args {
     display: flex;
