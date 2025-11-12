@@ -1,10 +1,14 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Query, status
+from fastapi.exceptions import HTTPException
+from typing import Any
 
+from hestia.common.exceptions import InvalidArgumentsError, UnknownIdentifierError
+from hestia.common.module_group import ModuleGroup
+from hestia.common.types import Identifier
 from hestia.integer import IntegerModule
 from hestia.natural import NaturalModule
-from hestia.rational import RationalModule
 from hestia.polynomial import PolynomialModule
-from hestia.common.module_group import ModuleGroup
+from hestia.rational import RationalModule
 
 
 def build_module_group() -> ModuleGroup:
@@ -27,7 +31,7 @@ app = FastAPI()
 
 
 @app.get("/functions")
-async def get_function_indices(
+async def list_functions(
     module_group: ModuleGroup = Depends(build_module_group),
     as_indices: bool = False,
 ) -> list[str]:
@@ -35,3 +39,37 @@ async def get_function_indices(
         return list(map(lambda f: f.value, module_group.methods()))
     else:
         return list(map(lambda f: f.name, module_group.methods()))
+
+
+@app.get("/call")
+async def call_function(
+    function: Identifier | str,
+    args: list[str] = Query([]),
+    module_group: ModuleGroup = Depends(build_module_group),
+) -> Any:
+    try:
+        identifier = Identifier.from_str(function)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Неизвестная функция: '{function}'. См. `GET /functions` для получения списка функций",
+        )
+
+    try:
+        result = module_group.call(identifier, args)
+        return {"result": str(result)}
+    except UnknownIdentifierError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Функция '{identifier}' не реализована",
+        )
+    except InvalidArgumentsError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Неверное количество аргументов (ожидалось {e.expected}, получено {e.actual})",
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
