@@ -27,10 +27,14 @@ def build_module_group() -> ModuleGroup:
     )
 
 
-app = FastAPI()
+app = FastAPI(title="Hestia", summary="Hestia HTTP API")
 
 
-@app.get("/functions")
+@app.get(
+    "/functions",
+    summary="Список доступных функций",
+    tags=["Hestia"],
+)
 async def list_functions(
     module_group: ModuleGroup = Depends(build_module_group),
     as_indices: bool = False,
@@ -41,7 +45,11 @@ async def list_functions(
         return list(map(lambda f: f.name, module_group.methods()))
 
 
-@app.get("/call")
+@app.get(
+    "/call",
+    summary="Вызов функции по имени или номеру",
+    tags=["Hestia"],
+)
 async def call_function(
     function: Identifier | str,
     args: list[str] = Query([]),
