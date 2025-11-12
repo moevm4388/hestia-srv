@@ -132,3 +132,23 @@ footer {
     padding: 1rem;
     text-align: center;
 }
+
+a {
+    transition: .2s color ease;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #3b82f6;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: true;
+    justify-content: center;
+    gap: 18px;
+}
+
+.footer-title {
+    font-size: 8rem;
+}

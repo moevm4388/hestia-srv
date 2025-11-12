@@ -14,7 +14,7 @@ function createArgInput() {
     const btn = document.createElement('button');
     btn.className = 'button-secondary remove-arg';
     btn.type = 'button';
-    btn.textContent = 'x';
+    btn.textContent = '×';
 
     btn.addEventListener('click', function() {
         if (argsContainer.children.length > 1) {
