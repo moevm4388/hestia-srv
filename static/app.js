@@ -1,7 +1,7 @@
 const argsContainer = document.querySelector('.calc-args');
 const addArgBtn = document.getElementById('calc-add-arg');
 const form = document.getElementById('calc-form');
-const resultDiv = document.getElementById('calc-result');
+const resultContainer = document.getElementById('calc-result');
 
 function createArgInput() {
     const div = document.createElement('div');
@@ -45,11 +45,33 @@ function updateRemoveButtons() {
     });
 }
 
-addArgBtn.addEventListener('click', addArgInput);
+function displayData(data) {
+    let result = data.hasOwnProperty('result') ? data.result : data.detail;
+    resultContainer.textContent = result;
+    resultContainer.dataset.inProgress = false;
+}
 
-form.addEventListener('submit', function(e) {
+function handleFormSubmission(e) {
     e.preventDefault();
-    // TODO: handle form submission
-});
+
+    resultContainer.hidden = false;
+    resultContainer.textContent = 'Подождите...'
+    resultContainer.dataset.inProgress = true;
+
+    const funcName = document.getElementById("function-name").value;
+    const apiURL = new URL(`/api/call/${funcName}`, window.location.origin)
+
+    Array.from(argsContainer.querySelectorAll('.calc-arg-input'))
+        .map(input => input.value)
+        .forEach(arg => apiURL.searchParams.append("args", arg))
+
+    fetch(apiURL)
+        .then(response => response.json())
+        .then(displayData)
+        .catch(console.log)
+}
+
+addArgBtn.addEventListener('click', addArgInput);
+form.addEventListener('submit', handleFormSubmission);
 
 addArgInput()
