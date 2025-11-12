@@ -81,3 +81,8 @@ async def call_function(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
+
+
+@app.get("/health", summary="Проверка состояния сервиса", tags=["Health"])
+async def health():
+    return {"status": "All system operational"}
